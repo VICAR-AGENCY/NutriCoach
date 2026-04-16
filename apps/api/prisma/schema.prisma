@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                   String   @id @default(uuid())
+  phone                String   @unique
+  // profile stores: name, dob, gender, height_cm, activity_level, diet_type, allergies, disliked_foods, tone, checkin_times
+  profile              Json?
+  // goal stores: type, target_weight_kg, timeline_weeks, pace_kg_per_week
+  goal                 Json?
+  calorie_budget       Int?
+  // macros stores: protein_g, carbs_g, fat_g
+  macros               Json?
+  timezone             String   @default("Europe/Amsterdam")
+  onboarding_step      Int      @default(0)
+  onboarding_complete  Boolean  @default(false)
+  fcm_token            String?
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  meal_logs     MealLog[]
+  weight_logs   WeightLog[]
+  food_plans    FoodPlan[]
+  conversations Conversation[]
+  check_ins     CheckIn[]
+
+  @@index([phone])
+}
+
+enum MealType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  SNACK
+}
+
+model MealLog {
+  id              String    @id @default(uuid())
+  user_id         String
+  timestamp       DateTime  @default(now())
+  description     String
+  meal_type       MealType?
+  kcal            Int
+  protein_g       Float
+  carbs_g         Float
+  fat_g           Float
+  raw_ai_response Json?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, timestamp(sort: Desc)])
+}
+
+model WeightLog {
+  id        String   @id @default(uuid())
+  user_id   String
+  date      DateTime @db.Date
+  weight_kg Float
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, date])
+  @@index([user_id, date])
+}
+
+model FoodPlan {
+  id         String   @id @default(uuid())
+  user_id    String
+  week_nr    Int
+  year       Int
+  // meals: array of PlannedMeal objects
+  meals      Json     @default("[]")
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, week_nr, year])
+  @@index([user_id])
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ONBOARDING
+  COMPLETED
+}
+
+model Conversation {
+  id         String             @id @default(uuid())
+  user_id    String
+  // messages: array of { role, content, timestamp }
+  messages   Json               @default("[]")
+  status     ConversationStatus @default(ACTIVE)
+  context    Json?
+  created_at DateTime           @default(now())
+  updated_at DateTime           @updatedAt
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, status])
+  @@index([user_id, updated_at(sort: Desc)])
+}
+
+enum CheckInType {
+  BREAKFAST
+  LUNCH
+  DINNER
+  WEIGHT
+  WEEKLY_SUMMARY
+}
+
+model CheckIn {
+  id             String      @id @default(uuid())
+  user_id        String
+  type           CheckInType
+  scheduled_time DateTime
+  completed      Boolean     @default(false)
+  completed_at   DateTime?
+  message_sid    String?
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id, scheduled_time])
+  @@index([scheduled_time, completed])
+}
