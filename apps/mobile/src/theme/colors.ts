@@ -1,27 +1,27 @@
 export const colors = {
-  primary: '#2D9B4E',       // NutriCoach green
-  primaryLight: '#E8F5EE',
-  primaryDark: '#1E6E35',
+  primary: '#9B89C4',       // lavendel
+  primaryLight: '#EDE9F7',
+  primaryDark: '#6B5FA0',
 
-  secondary: '#FF6B35',     // Energy orange (calories)
-  secondaryLight: '#FFF0EA',
+  secondary: '#F4A896',     // perzik
+  secondaryLight: '#FEF0ED',
 
-  protein: '#5B8EE6',       // Blue — protein
-  carbs: '#F5C242',         // Yellow — carbs
-  fat: '#E87D5A',           // Orange-red — fat
+  protein: '#7BB8D4',       // zacht blauw
+  carbs: '#F5C88A',         // warm geel
+  fat: '#E8A896',           // zacht roze-oranje
 
-  success: '#27AE60',
-  warning: '#F39C12',
-  error: '#E74C3C',
+  success: '#7BC4A0',
+  warning: '#F5C88A',
+  error: '#E87A7A',
 
-  text: '#1A1A2E',
-  textSecondary: '#6B7280',
-  textDisabled: '#9CA3AF',
+  text: '#2D2040',
+  textSecondary: '#7B6E8F',
+  textDisabled: '#B8AECE',
 
-  background: '#F9FAFB',
+  background: '#F9F7FF',
   surface: '#FFFFFF',
-  border: '#E5E7EB',
-  divider: '#F3F4F6',
+  border: '#E4DFF0',
+  divider: '#F0EDF8',
 
   white: '#FFFFFF',
   black: '#000000',

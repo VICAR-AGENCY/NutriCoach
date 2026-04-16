@@ -47,9 +47,9 @@ export function DashboardScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.greeting}>{greeting}! 👋</Text>
+          <Text style={styles.greeting}>{greeting}</Text>
           <View style={styles.streak}>
-            <Text style={styles.streakText}>🔥 {data?.streak_days ?? 0} dagen</Text>
+            <Text style={styles.streakText}>{data?.streak_days ?? 0} dagen</Text>
           </View>
         </View>
 
@@ -101,7 +101,7 @@ export function DashboardScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Vandaag gegeten</Text>
           {data?.today_meals?.length === 0 ? (
-            <Text style={styles.empty}>Nog niets gelogd — stuur een WhatsApp bericht! 💬</Text>
+            <Text style={styles.empty}>Nog niets gelogd{'\n'}Stuur een WhatsApp bericht naar NutriCoach om je maaltijd te loggen.</Text>
           ) : (
             data?.today_meals?.map((meal) => (
               <MealCard key={meal.id} {...meal} />

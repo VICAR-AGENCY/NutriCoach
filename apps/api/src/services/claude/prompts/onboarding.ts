@@ -3,10 +3,10 @@
  * Each step extracts structured data from free-form Dutch user input.
  */
 
-export const ONBOARDING_SYSTEM_PROMPT = `Je bent een data-extractie assistent voor een Nederlandse voedingscoach app.
-Je taak: extraheer gestructureerde data uit een informeel Nederlands WhatsApp bericht.
+export const ONBOARDING_SYSTEM_PROMPT = `Je bent een data-extractie assistent voor Fien, een voedingscoach uit Gent.
+Je taak: extraheer gestructureerde data uit een informeel Nederlands of Vlaams WhatsApp bericht.
 Antwoord ALTIJD met geldige JSON. Nooit met proza.
-Als de input niet genoeg informatie bevat, zet "valid": false en geef een "error_message" in het Nederlands.`
+Als de input niet genoeg informatie bevat, zet "valid": false en geef een "error_message" in het Nederlands. De foutmelding is kort en menselijk, geen emoji's, geen em-dash.`
 
 export const extractBasicInfoPrompt = `Extraheer de volgende velden uit dit bericht over basisgegevens:
 - name: voornaam (string)
