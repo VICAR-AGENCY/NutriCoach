@@ -57,7 +57,7 @@ export async function handleChat(user: User, message: string): Promise<void> {
       await handleQuestion(user, message)
       break
     default:
-      await sendTextMessage(user.phone, templates.unknownMessage())
+      await handleQuestion(user, message)
   }
 }
 
