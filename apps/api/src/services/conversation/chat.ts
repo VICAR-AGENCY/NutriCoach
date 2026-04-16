@@ -1,5 +1,4 @@
-import type { User } from '@prisma/client'
-import { Prisma } from '@prisma/client'
+import type { User } from '.prisma/client'
 import { prisma } from '../../config/database'
 import { sendTextMessage } from '../whatsapp/client'
 import { templates } from '../whatsapp/templates'
@@ -79,7 +78,7 @@ async function handleMealLog(user: User, message: string): Promise<void> {
       protein_g: analysis.protein_g,
       carbs_g: analysis.carbs_g,
       fat_g: analysis.fat_g,
-      raw_ai_response: analysis as unknown as Prisma.InputJsonValue,
+      raw_ai_response: analysis as any,
     },
   })
 

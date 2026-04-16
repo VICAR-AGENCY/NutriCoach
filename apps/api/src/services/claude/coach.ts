@@ -1,6 +1,6 @@
 import { callClaude } from './client'
 import { buildCoachSystemPrompt } from './prompts/system'
-import type { User } from '@prisma/client'
+import type { User } from '.prisma/client'
 import { prisma } from '../../config/database'
 
 interface DailyContext {

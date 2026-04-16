@@ -1,5 +1,4 @@
-import type { User } from '@prisma/client'
-import { Prisma } from '@prisma/client'
+import type { User } from '.prisma/client'
 import { prisma } from '../../config/database'
 import { sendTextMessage } from '../whatsapp/client'
 import { templates } from '../whatsapp/templates'
@@ -280,7 +279,7 @@ async function handleCheckinPrefs(user: User, message: string): Promise<void> {
       onboarding_step: 7,
       onboarding_complete: true,
       calorie_budget: calorieBudget,
-      macros: macros as unknown as Prisma.InputJsonValue,
+      macros: macros as any,
       profile: {
         ...profile,
         tone: result.tone ?? 'motiverend',

@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client'
+import type { User } from '.prisma/client'
 
 /**
  * Base system prompt for NutriCoach's coaching persona.

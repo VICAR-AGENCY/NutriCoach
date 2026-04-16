@@ -34,8 +34,8 @@ export async function mealsRoutes(app: FastifyInstance) {
       const meal = await prisma.mealLog.create({
         data: {
           user_id: userId,
-          ...request.body,
-        } as Parameters<typeof prisma.mealLog.create>[0]['data'],
+          ...(request.body as any),
+        },
       })
       return reply.status(201).send(meal)
     },
