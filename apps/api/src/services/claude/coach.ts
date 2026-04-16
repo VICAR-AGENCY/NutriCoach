@@ -2,6 +2,8 @@ import { callClaude } from './client'
 import { buildCoachSystemPrompt } from './prompts/system'
 import type { User } from '.prisma/client'
 import { prisma } from '../../config/database'
+import { redis } from '../../lib/redis'
+import { getHistory, appendHistory } from '../conversation/history'
 
 interface DailyContext {
   kcal_consumed: number
@@ -71,9 +73,12 @@ Huidige dagvoortgang:
 
   const system = buildCoachSystemPrompt(user) + contextNote
 
-  return callClaude({
-    system,
-    messages: [{ role: 'user', content: message }],
-    maxTokens: 300,
-  })
+  const history = await getHistory(redis, user.id)
+  const messages = [...history, { role: 'user' as const, content: message }]
+
+  const reply = await callClaude({ system, messages, maxTokens: 300 })
+
+  await appendHistory(redis, user.id, message, reply)
+
+  return reply
 }
