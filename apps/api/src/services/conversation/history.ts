@@ -71,7 +71,7 @@ export async function persistMessages(
       select: { messages: true },
     })
 
-    const existing = (conversation?.messages as StoredMessage[]) ?? []
+    const existing = (conversation?.messages as unknown as StoredMessage[]) ?? []
     const now = new Date().toISOString()
 
     const updated: StoredMessage[] = [
@@ -99,7 +99,7 @@ export async function persistSystemMessage(userId: string, content: string): Pro
       select: { messages: true },
     })
 
-    const existing = (conversation?.messages as StoredMessage[]) ?? []
+    const existing = (conversation?.messages as unknown as StoredMessage[]) ?? []
     const updated: StoredMessage[] = [
       ...existing,
       { role: 'system', content, timestamp: new Date().toISOString() },
