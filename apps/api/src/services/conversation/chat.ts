@@ -7,6 +7,7 @@ import { generateCoachResponse } from '../claude/coach'
 import { callClaudeJSON } from '../claude/client'
 import { parseWeight } from '@nutricoach/shared'
 import { logger } from '../../lib/logger'
+import { persistMessages } from './history'
 
 type Intent = 'MEAL_LOG' | 'WEIGHT_LOG' | 'QUESTION' | 'UNCLEAR'
 
@@ -95,24 +96,23 @@ async function handleMealLog(user: User, message: string): Promise<void> {
   const totalKcal = todayMeals.reduce((sum, m) => sum + m.kcal, 0)
   const calorieBudget = user.calorie_budget ?? 2000
 
-  await sendTextMessage(
-    user.phone,
-    templates.mealLogged({
-      kcal: analysis.kcal,
-      calorie_budget: calorieBudget,
-      protein_g: Math.round(analysis.protein_g),
-    }),
-  )
+  const reply = templates.mealLogged({
+    kcal: analysis.kcal,
+    calorie_budget: calorieBudget,
+    protein_g: Math.round(analysis.protein_g),
+  })
+
+  await sendTextMessage(user.phone, reply)
+  await persistMessages(user.id, message, reply)
 
   // Check if they've significantly exceeded their budget — send a gentle note
   if (totalKcal > calorieBudget * 1.15) {
     const profile = user.profile as Record<string, unknown> | null
     const name = (profile?.name as string) ?? ''
     const over = totalKcal - calorieBudget
-    await sendTextMessage(
-      user.phone,
-      `Je zit ${over} kcal boven je budget vandaag${name ? `, ${name}` : ''}. Geen zorgen — morgen is een nieuwe dag! 💪`,
-    )
+    const overBudgetMsg = `Je zit ${over} kcal boven je budget vandaag${name ? `, ${name}` : ''}. Geen zorgen, morgen is een nieuwe dag.`
+    await sendTextMessage(user.phone, overBudgetMsg)
+    await persistMessages(user.id, '', overBudgetMsg)
   }
 }
 
@@ -139,7 +139,9 @@ async function handleWeightLog(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.weightLogged(weight))
+  const reply = templates.weightLogged(weight)
+  await sendTextMessage(user.phone, reply)
+  await persistMessages(user.id, message, reply)
 }
 
 async function handleQuestion(user: User, message: string): Promise<void> {

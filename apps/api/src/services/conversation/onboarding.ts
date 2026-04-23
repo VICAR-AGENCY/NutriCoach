@@ -19,6 +19,7 @@ import {
   ONBOARDING_STEPS,
 } from '@nutricoach/shared'
 import { logger } from '../../lib/logger'
+import { persistMessages, persistSystemMessage } from './history'
 
 /**
  * Route the user through the 7-step onboarding flow.
@@ -62,12 +63,16 @@ async function handleWelcome(user: User, message: string): Promise<void> {
 
   if (normalized === 'ja' || normalized === 'yes' || normalized === 'ok' || normalized === 'oke') {
     await prisma.user.update({ where: { id: user.id }, data: { onboarding_step: 1 } })
-    await sendTextMessage(user.phone, templates.askBasicInfo())
+    const q = templates.askBasicInfo()
+    await sendTextMessage(user.phone, q)
+    await persistMessages(user.id, message, q)
   } else if (normalized === 'stop' || normalized === 'nee' || normalized === 'no') {
     await sendTextMessage(user.phone, templates.gdprDeclined())
   } else {
     // First message from any user — send the welcome
-    await sendTextMessage(user.phone, templates.welcome())
+    const welcome = templates.welcome()
+    await sendTextMessage(user.phone, welcome)
+    await persistSystemMessage(user.id, welcome)
   }
 }
 
@@ -107,7 +112,9 @@ async function handleBasicInfo(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.askBodyStats(result.name))
+  const q1 = templates.askBodyStats(result.name)
+  await sendTextMessage(user.phone, q1)
+  await persistMessages(user.id, message, q1)
 }
 
 async function handleBodyStats(user: User, message: string): Promise<void> {
@@ -138,7 +145,9 @@ async function handleBodyStats(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.askGoal())
+  const q2 = templates.askGoal()
+  await sendTextMessage(user.phone, q2)
+  await persistMessages(user.id, message, q2)
 }
 
 async function handleGoal(user: User, message: string): Promise<void> {
@@ -172,7 +181,9 @@ async function handleGoal(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.askLifestyle())
+  const q3 = templates.askLifestyle()
+  await sendTextMessage(user.phone, q3)
+  await persistMessages(user.id, message, q3)
 }
 
 async function handleLifestyle(user: User, message: string): Promise<void> {
@@ -199,7 +210,9 @@ async function handleLifestyle(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.askFoodPrefs())
+  const q4 = templates.askFoodPrefs()
+  await sendTextMessage(user.phone, q4)
+  await persistMessages(user.id, message, q4)
 }
 
 async function handleFoodPrefs(user: User, message: string): Promise<void> {
@@ -233,7 +246,9 @@ async function handleFoodPrefs(user: User, message: string): Promise<void> {
     },
   })
 
-  await sendTextMessage(user.phone, templates.askCheckinPrefs())
+  const q5 = templates.askCheckinPrefs()
+  await sendTextMessage(user.phone, q5)
+  await persistMessages(user.id, message, q5)
 }
 
 async function handleCheckinPrefs(user: User, message: string): Promise<void> {
@@ -293,16 +308,15 @@ async function handleCheckinPrefs(user: User, message: string): Promise<void> {
   })
 
   const name = (profile.name as string) ?? 'je'
-  await sendTextMessage(
-    user.phone,
-    templates.onboardingComplete({
-      name,
-      calorie_budget: calorieBudget,
-      protein_g: macros.protein_g,
-      carbs_g: macros.carbs_g,
-      fat_g: macros.fat_g,
-    }),
-  )
+  const completionMsg = templates.onboardingComplete({
+    name,
+    calorie_budget: calorieBudget,
+    protein_g: macros.protein_g,
+    carbs_g: macros.carbs_g,
+    fat_g: macros.fat_g,
+  })
+  await sendTextMessage(user.phone, completionMsg)
+  await persistMessages(user.id, message, completionMsg)
 
   logger.info({ phone: user.phone, calorieBudget }, 'Onboarding completed')
 }
