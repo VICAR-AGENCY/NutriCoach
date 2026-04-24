@@ -106,7 +106,7 @@ export async function scheduleUserCheckIns(
 
     await checkInQueue.add(`check-in-${type.toLowerCase()}`, jobData, {
       delay,
-      jobId: `checkin:${userId}:${type}:${dateStr}`,
+      jobId: `checkin-${userId}-${type}-${dateStr}`,
     })
 
     logger.debug({ userId, type, scheduledAt }, 'Check-in job scheduled')
