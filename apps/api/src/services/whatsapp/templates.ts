@@ -32,8 +32,10 @@ export const templates = {
   }) =>
     `Mooi, ${params.name}. Ik heb een goed beeld van wat je nodig hebt.\n\nJouw dagbudget is ${params.calorie_budget} kcal: ${params.protein_g}g eiwit, ${params.carbs_g}g koolhydraten, ${params.fat_g}g vet.\n\nIk stuur je morgen je eerste berichtje na het ontbijt. Je kunt ook de NutriCoach app downloaden voor een overzicht van je voortgang: nutricoach.nl/app`,
 
-  mealCheckin: (mealType: 'ontbijt' | 'lunch' | 'diner', name: string) =>
-    `${name}, wat had je vandaag als ${mealType}? Vertel het gewoon zoals het was.`,
+  mealCheckin: (mealType: 'ontbijt' | 'lunch' | 'diner', _name: string) => {
+    const labels = { ontbijt: 'vanochtend gegeten', lunch: 'deze middag gegeten', diner: 'vanavond gegeten' }
+    return `Wat heb je ${labels[mealType]}?`
+  },
 
   mealLogged: (params: {
     kcal: number
